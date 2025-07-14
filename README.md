@@ -1,73 +1,137 @@
-# Welcome to your Lovable project
+# InnerBloom--Peer-Management-Platform
+By Alchemists
 
-## Project info
+## About
 
-**URL**: https://lovable.dev/projects/8adbf624-ba69-49a9-82db-870e2c87b7bb
+InnerBloom is a comprehensive mental health peer support platform designed to connect individuals with similar experiences and provide wellness tracking tools. Our platform fosters a supportive community where users can find peers, join communities, track their mental health journey, and access wellness resources.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+### 🤝 Peer Matching & Support
+- **Smart Peer Matching**: Connect with individuals who share similar experiences
+- **Support Circles**: Join or create support groups based on specific needs
+- **Real-time Chat**: Communicate with peers through our integrated chat system
+- **Profile Management**: Create detailed profiles to help with better matching
 
-**Use Lovable**
+### 🏥 Wellness Tracking
+- **Activity Tracker**: Monitor daily activities and their impact on mood
+- **Mood Journal**: Track emotional patterns over time with detailed notes
+- **Energy Levels**: Monitor energy throughout the day with visual charts
+- **Stress Detection**: AI-powered facial stress analysis (simulated)
+- **Health Chatbot**: Get personalized wellness tips and support
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8adbf624-ba69-49a9-82db-870e2c87b7bb) and start prompting.
+### 👥 Community Features
+- **Community Discussions**: Join topic-based communities and participate in discussions
+- **Activity Groups**: Find and join activities like fitness, educational, and social events
+- **Resource Sharing**: Access and share mental health resources
+- **Anonymous Support**: Option to remain anonymous while providing support
 
-Changes made via Lovable will be committed automatically to this repo.
+### 📊 Dashboard & Analytics
+- **Comprehensive Dashboard**: View all your wellness data in one place
+- **Interactive Charts**: Visual representation of mood, energy, and activity trends
+- **Progress Tracking**: Monitor your mental health journey over time
+- **Personalized Insights**: Get recommendations based on your patterns
 
-**Use your preferred IDE**
+## Technology Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Charts**: Recharts for data visualization
+- **Icons**: Lucide React
+- **Build Tool**: Vite
+- **Package Manager**: npm
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Getting Started
 
-Follow these steps:
+### Prerequisites
+- Node.js (version 16 or higher)
+- npm or yarn
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/samartharora25/InnerBloom--Peer-Management-Platform.git
+   cd InnerBloom--Peer-Management-Platform
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser**
+   Navigate to `http://localhost:8081` (or the port shown in your terminal)
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── auth/           # Authentication components
+│   ├── communities/    # Community features
+│   ├── dashboard/      # Dashboard components
+│   ├── landing/        # Landing page components
+│   ├── matching/       # Peer matching features
+│   ├── support/        # Support features
+│   ├── ui/            # Reusable UI components
+│   └── wellness/      # Wellness tracking features
+├── hooks/             # Custom React hooks
+├── lib/              # Utility functions
+├── pages/            # Main page components
+└── assets/           # Images and static assets
 ```
 
-**Edit a file directly in GitHub**
+## Key Features in Detail
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Wellness Dashboard
+- **Activity Tracking**: Log daily activities and see patterns over time
+- **Mood Monitoring**: Track mood changes with emoji-based input and notes
+- **Energy Levels**: Use a slider to log energy levels (1-10 scale)
+- **Visual Analytics**: Interactive charts showing trends over the last 7 days
 
-**Use GitHub Codespaces**
+### Peer Matching System
+- **Search Functionality**: Find peers based on interests and experiences
+- **Connection Management**: Send connection requests and manage your network
+- **Chat Integration**: Direct messaging with connected peers
+- **Profile Views**: Detailed peer profiles with connection status
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Community Engagement
+- **Discussion Forums**: Topic-based discussions with real-time updates
+- **Activity Discovery**: Browse and join various activities and events
+- **Community Categories**: Organized communities by type (Support, Fitness, Educational, etc.)
+- **Participation Tracking**: Monitor your engagement across communities
 
-## What technologies are used for this project?
+## Contributing
 
-This project is built with:
+We welcome contributions from the community! Please feel free to:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## How can I deploy this project?
+## Team
 
-Simply open [Lovable](https://lovable.dev/projects/8adbf624-ba69-49a9-82db-870e2c87b7bb) and click on Share -> Publish.
+**Alchemists** - A dedicated team passionate about mental health and technology.
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Support
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+If you have any questions or need support, please:
+- Open an issue on GitHub
+- Contact the development team
+- Check our documentation
+
+---
+
+**InnerBloom** - Fostering connections, supporting growth, and promoting mental wellness together. 🌱
