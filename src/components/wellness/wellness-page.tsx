@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,8 +6,12 @@ import { Camera, MessageCircle, Activity, Heart, Brain, Zap, Play, Square } from
 import { toast } from "sonner";
 import { ChartContainer } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid, ResponsiveContainer } from "recharts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const WellnessPage = () => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
   const [isRecording, setIsRecording] = useState(false);
   const [stressLevel, setStressLevel] = useState<number | null>(null);
   const [pulse, setPulse] = useState<number | null>(null);
@@ -25,23 +29,61 @@ export const WellnessPage = () => {
   const [energy, setEnergy] = useState(5);
   const [energyEntries, setEnergyEntries] = useState<{ level: number; date: string }[]>([]);
 
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { sender: "bot", text: "Hi! I'm your wellness companion. How are you feeling today?" }
+  ]);
+  const [chatInput, setChatInput] = useState("");
+
+  // Start camera and analysis
   const startStressDetection = async () => {
     setIsRecording(true);
     toast.success("Camera activated for stress detection...");
-    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (err) {
+      toast.error("Unable to access camera. Please allow camera access.");
+      setIsRecording(false);
+      return;
+    }
     // Simulate stress detection
     setTimeout(() => {
       setStressLevel(Math.floor(Math.random() * 40) + 30); // 30-70
       setPulse(Math.floor(Math.random() * 30) + 70); // 70-100
       setIsRecording(false);
       toast.success("Analysis complete!");
+      // Stop camera after analysis
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
     }, 3000);
   };
 
+  // Stop camera and analysis
   const stopRecording = () => {
     setIsRecording(false);
     toast.info("Recording stopped");
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
   };
+
+  // Clean up camera on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+    };
+  }, []);
 
   const handleAddActivity = () => {
     if (activityInput.trim()) {
@@ -60,6 +102,30 @@ export const WellnessPage = () => {
 
   const handleAddEnergy = () => {
     setEnergyEntries([{ level: energy, date: new Date().toLocaleDateString() }, ...energyEntries]);
+  };
+
+  const handleSendChat = () => {
+    if (!chatInput.trim()) return;
+    const userMsg = { sender: "user", text: chatInput };
+    setChatMessages((msgs) => [...msgs, userMsg]);
+    setChatInput("");
+    // Simulate AI response
+    setTimeout(() => {
+      const lower = chatInput.toLowerCase();
+      let reply = "I'm here to support you. Can you tell me more?";
+      if (lower.includes("stress") || lower.includes("anxious") || lower.includes("overwhelmed")) {
+        reply = "I'm sorry you're feeling stressed. Try taking a few deep breaths. Would you like a tip for stress relief?";
+      } else if (lower.includes("sad") || lower.includes("down") || lower.includes("depressed")) {
+        reply = "It's okay to feel sad sometimes. Remember, you're not alone. Would you like a mood-boosting activity suggestion?";
+      } else if (lower.includes("happy") || lower.includes("good") || lower.includes("great")) {
+        reply = "That's wonderful to hear! Keep up the positive energy. Would you like a wellness tip to maintain your mood?";
+      } else if (lower.includes("tip") || lower.includes("yes")) {
+        reply = "Here's a tip: Take a 5-minute mindful break. Close your eyes, breathe deeply, and focus on the present moment.";
+      } else if (lower.includes("thank")) {
+        reply = "You're welcome! I'm always here if you need to talk or need more tips.";
+      }
+      setChatMessages((msgs) => [...msgs, { sender: "bot", text: reply }]);
+    }, 800);
   };
 
   // Chart data for last 7 days
@@ -112,10 +178,14 @@ export const WellnessPage = () => {
           <CardContent className="space-y-4">
             <div className="text-center p-8 bg-muted/30 rounded-lg">
               {isRecording ? (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-destructive/20 rounded-full flex items-center justify-center mx-auto animate-pulse">
-                    <Camera className="w-8 h-8 text-destructive" />
-                  </div>
+                <div className="space-y-4 flex flex-col items-center">
+                  <video
+                    ref={videoRef}
+                    className="w-32 h-32 rounded-lg border border-primary mx-auto bg-black"
+                    autoPlay
+                    playsInline
+                    muted
+                  />
                   <p className="text-sm text-muted-foreground">Analyzing facial expressions...</p>
                 </div>
               ) : (
@@ -183,10 +253,34 @@ export const WellnessPage = () => {
                 </div>
               </div>
             </div>
-            <Button className="w-full" variant="outline">
+            <Button className="w-full" variant="outline" onClick={() => setChatbotOpen(true)}>
               <MessageCircle className="w-4 h-4 mr-2" />
               Start Wellness Chat
             </Button>
+            <Dialog open={chatbotOpen} onOpenChange={setChatbotOpen}>
+              <DialogContent className="max-w-md w-full">
+                <DialogHeader>
+                  <DialogTitle>Wellness Chatbot</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-2 max-h-64 overflow-y-auto mb-2 p-2 bg-muted/30 rounded">
+                  {chatMessages.map((msg, i) => (
+                    <div key={i} className={`text-sm px-2 py-1 rounded-lg max-w-[80%] ${msg.sender === "user" ? "bg-primary/10 self-end text-right" : "bg-white self-start"}`}>
+                      {msg.text}
+                    </div>
+                  ))}
+                </div>
+                <form className="flex gap-2" onSubmit={e => { e.preventDefault(); handleSendChat(); }}>
+                  <input
+                    className="flex-1 border rounded px-2 py-1"
+                    placeholder="Type your message..."
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    autoFocus
+                  />
+                  <Button type="submit" size="sm">Send</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
       </div>
