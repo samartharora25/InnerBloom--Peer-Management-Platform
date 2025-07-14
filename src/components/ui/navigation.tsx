@@ -30,7 +30,7 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
             <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-primary">
               <img src={innerbloomLogo} alt="Innerbloom Logo" className="w-6 h-6 object-contain" />
             </div>
-            <span className="text-xl font-bold text-primary font-roboto">
+            <span className="text-xl font-bold text-[#004030] font-roboto">
               InnerBloom
             </span>
           </div>

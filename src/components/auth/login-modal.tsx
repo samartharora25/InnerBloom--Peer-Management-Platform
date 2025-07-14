@@ -43,7 +43,7 @@ export const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               <img src={innerbloomLogo} alt="Innerbloom Logo" className="w-6 h-6 object-contain" />
             </div>
           </div>
-          <DialogTitle className="text-center text-2xl font-kalam">
+          <DialogTitle className="text-center text-2xl font-kalam text-[#004030]">
             Welcome Back to InnerBloom
           </DialogTitle>
           <p className="text-center text-muted-foreground">

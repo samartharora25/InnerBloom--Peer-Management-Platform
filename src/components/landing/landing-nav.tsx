@@ -22,7 +22,7 @@ export const LandingNav = ({ onLogin, onSignup }: LandingNavProps) => {
             alt="Innerbloom Logo"
             className="w-12 h-12 object-contain"
           />
-          <span className="text-xl font-roboto font-bold text-foreground">
+          <span className="text-xl font-roboto font-bold text-[#004030]">
             InnerBloom
           </span>
         </div>

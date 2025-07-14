@@ -63,7 +63,7 @@ export const SignupModal = ({ open, onOpenChange }: SignupModalProps) => {
               <img src={innerbloomLogo} alt="Innerbloom Logo" className="w-6 h-6 object-contain" />
             </div>
           </div>
-          <DialogTitle className="text-center text-2xl font-kalam">
+          <DialogTitle className="text-center text-2xl font-kalam text-[#004030]">
             {step === 1 && "Join InnerBloom"}
             {step === 2 && "Tell Us About Yourself"}
             {step === 3 && "You're Ready to Bloom!"}

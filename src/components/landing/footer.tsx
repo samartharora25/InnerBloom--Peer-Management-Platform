@@ -14,7 +14,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <img src={innerbloomLogo} alt="Innerbloom Logo" className="w-8 h-8 object-contain" />
-              <span className="text-2xl font-roboto font-bold text-foreground">
+              <span className="text-2xl font-roboto font-bold text-[#004030]">
                 InnerBloom
               </span>
             </div>
