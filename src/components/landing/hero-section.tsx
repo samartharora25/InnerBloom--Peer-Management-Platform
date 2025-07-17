@@ -1,52 +1,70 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Heart, Users } from "lucide-react";
+import shaderGradient from '@/assets/shadergradient.gif';
+import { useRef } from 'react';
 
 interface HeroSectionProps {
   onGetStarted: () => void;
 }
 
 export const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
-  return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-white via-primary/5 to-primary/10">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-10 -left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 -right-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-1/3 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-      </div>
+  // Ref for scrolling
+  const howItWorksRef = typeof window !== 'undefined' ? document.getElementById('how-it-works-section') : null;
 
+  const handleLearnHowItWorks = () => {
+    const el = document.getElementById('how-it-works-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <section
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${shaderGradient})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        animation: 'none',
+      }}
+    >
+      {/* No background decoration divs, just the gif */}
       <div className="container mx-auto px-4 text-center relative z-10 pt-32">
         <div className="max-w-4xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
-            You're Not{" "}
+            You're <span className="text-primary font-kalam">Not</span>{' '}
             <span className="text-primary font-kalam relative">
               Alone
               <Heart className="absolute -top-2 -right-8 w-8 h-8 text-primary animate-pulse" />
             </span>
             .
             <br />
-            Find Someone Who{" "}
+            Find Someone Who{' '}
             <span className="text-primary font-kalam">Gets It</span>.
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             AI-matched emotional support with people who understand what you're going through.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               onClick={onGetStarted}
               className="bg-primary hover:bg-primary/90 text-foreground px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-glow"
+              style={{ zIndex: 2 }}
             >
               Get Matched Now
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            
-            <Button 
-              size="lg" 
+
+            <Button
+              size="lg"
               variant="ghost"
               className="text-foreground hover:bg-primary/10 px-8 py-4 text-lg rounded-full transition-all duration-300"
+              onClick={handleLearnHowItWorks}
+              style={{ zIndex: 2 }}
             >
               <Users className="mr-2 w-5 h-5" />
               Learn How It Works

@@ -51,7 +51,7 @@ export const HowItWorks = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-primary/5 to-white relative overflow-hidden">
+    <section id="how-it-works-section" className="py-20 bg-gradient-to-b from-primary/5 to-white relative overflow-hidden">
       {/* Background texture */}
       <div className="absolute inset-0 opacity-30">
         <svg className="w-full h-full" viewBox="0 0 400 400">

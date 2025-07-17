@@ -50,7 +50,7 @@ export const EmergencySection = () => {
                 </div>
                 <h3 className="font-semibold text-foreground">Crisis Hotline</h3>
                 <p className="text-sm text-muted-foreground">
-                  Immediate connection to crisis counselors
+                  Call <span className="font-bold text-primary">14416</span> or <span className="font-bold text-primary">18008914416</span> for immediate connection to crisis counselors
                 </p>
               </div>
 

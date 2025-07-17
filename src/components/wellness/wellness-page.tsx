@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { ChartContainer } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid, ResponsiveContainer } from "recharts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import dayjs from 'dayjs';
 
 export const WellnessPage = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -23,11 +24,13 @@ export const WellnessPage = () => {
   // Mood Journal
   const [mood, setMood] = useState("");
   const [moodNote, setMoodNote] = useState("");
-  const [moodEntries, setMoodEntries] = useState<{ mood: string; note: string; date: string }[]>([]);
+  const [moodTime, setMoodTime] = useState(dayjs().format('HH:mm'));
+  const [moodEntries, setMoodEntries] = useState<{ mood: string; note: string; date: string; time: string }[]>([]);
 
   // Energy Levels
   const [energy, setEnergy] = useState(5);
-  const [energyEntries, setEnergyEntries] = useState<{ level: number; date: string }[]>([]);
+  const [energyTime, setEnergyTime] = useState(dayjs().format('HH:mm'));
+  const [energyEntries, setEnergyEntries] = useState<{ level: number; date: string; time: string }[]>([]);
 
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([
@@ -94,14 +97,17 @@ export const WellnessPage = () => {
 
   const handleAddMood = () => {
     if (mood) {
-      setMoodEntries([{ mood, note: moodNote, date: new Date().toLocaleDateString() }, ...moodEntries]);
+      setMoodEntries([{ mood, note: moodNote, date: dayjs().format('YYYY-MM-DD'), time: moodTime }, ...moodEntries]);
       setMood("");
       setMoodNote("");
+      setMoodTime(dayjs().format('HH:mm'));
     }
   };
 
   const handleAddEnergy = () => {
-    setEnergyEntries([{ level: energy, date: new Date().toLocaleDateString() }, ...energyEntries]);
+    setEnergyEntries([{ level: energy, date: dayjs().format('YYYY-MM-DD'), time: energyTime }, ...energyEntries]);
+    setEnergy(5);
+    setEnergyTime(dayjs().format('HH:mm'));
   };
 
   const handleSendChat = () => {
@@ -146,18 +152,34 @@ export const WellnessPage = () => {
     count: activities.filter(a => a.date === date).length
   }));
 
-  // Mood chart data (happy=5, neutral=3, sad/angry/stressed=1)
-  const moodScore = (m: string) => m === "😊" ? 5 : m === "😐" ? 3 : m ? 1 : 0;
-  const moodChartData = last7Days.map(date => {
-    const entry = moodEntries.find(e => e.date === date);
-    return { date, score: entry ? moodScore(entry.mood) : null };
-  });
-
-  // Energy chart data
-  const energyChartData = last7Days.map(date => {
-    const entry = energyEntries.find(e => e.date === date);
-    return { date, level: entry ? entry.level : null };
-  });
+  // Mood score mapping for custom graph
+  const today = dayjs().format('YYYY-MM-DD');
+  const moodScore = (m: string) => {
+    switch (m) {
+      case '😊': return 10;
+      case '😔': return 1;
+      case '😠': return 2;
+      case '😰': return 3;
+      case '😐': return 5;
+      default: return 0;
+    }
+  };
+  const moodChartData = moodEntries
+    .filter(e => dayjs(e.date).format('YYYY-MM-DD') === today)
+    .map(e => ({
+      time: e.time,
+      score: moodScore(e.mood),
+      mood: e.mood,
+      note: e.note,
+    }))
+    .sort((a, b) => a.time.localeCompare(b.time));
+  const energyChartData = energyEntries
+    .filter(e => dayjs(e.date).format('YYYY-MM-DD') === today)
+    .map(e => ({
+      time: e.time,
+      level: e.level,
+    }))
+    .sort((a, b) => a.time.localeCompare(b.time));
 
   return (
     <div className="space-y-6">
@@ -333,21 +355,21 @@ export const WellnessPage = () => {
           <CardContent className="p-6 text-center">
             <Heart className="w-8 h-8 mx-auto text-primary mb-3" />
             <h3 className="font-semibold mb-2">Mood Journal</h3>
-            <p className="text-sm text-muted-foreground mb-3">Track emotional patterns over time</p>
-            {/* Chart */}
-            <div className="mb-4">
+            <p className="text-sm text-muted-foreground mb-3">Log your mood multiple times a day and see your trend.</p>
+            {/* Time-series Line Graph */}
+            <div className="mb-4 bg-gradient-to-b from-[#e6fff5] to-[#f6fdfb] rounded-lg p-2">
               <ResponsiveContainer width="100%" height={120}>
-                <LineChart data={moodChartData}>
-                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                  <YAxis domain={[0, 5]} width={24} />
-                  <Tooltip />
-                  <CartesianGrid strokeDasharray="3 3" />
+                <LineChart data={moodChartData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+                  <XAxis dataKey="time" tick={{ fontSize: 10 }} type="category" />
+                  <YAxis domain={[0, 10]} width={24} />
+                  <Tooltip formatter={(v, n, p) => n === 'score' ? `${v} (${moodChartData[p.dataIndex].mood})` : v} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#b2f5ea" />
                   <Line type="monotone" dataKey="score" stroke="#13eba0" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex gap-2 mb-2">
-              <select className="border rounded px-2 py-1" value={mood} onChange={e => setMood(e.target.value)} title="Select your mood">
+            <div className="flex flex-wrap gap-2 mb-2 items-center">
+              <select className="border rounded px-2 py-1 min-w-[90px]" value={mood} onChange={e => setMood(e.target.value)} title="Select your mood">
                 <option value="">Mood</option>
                 <option value="😊">Happy</option>
                 <option value="😔">Sad</option>
@@ -356,22 +378,28 @@ export const WellnessPage = () => {
                 <option value="😐">Neutral</option>
               </select>
               <input
-                className="flex-1 border rounded px-2 py-1"
+                className="flex-1 min-w-[120px] border rounded px-2 py-1"
                 placeholder="Add a note (optional)"
                 value={moodNote}
                 onChange={e => setMoodNote(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleAddMood(); }}
                 title="Mood note"
               />
-              <Button size="sm" onClick={handleAddMood}>Log</Button>
+              <input
+                type="time"
+                className="border rounded px-2 py-1 w-24 min-w-[80px]"
+                value={moodTime}
+                onChange={e => setMoodTime(e.target.value)}
+                title="Time of mood"
+              />
+              <Button size="sm" className="whitespace-nowrap" onClick={handleAddMood}>Log</Button>
             </div>
-            <div className="text-left max-h-32 overflow-y-auto">
-              {moodEntries.length === 0 && <div className="text-xs text-muted-foreground">No mood entries yet.</div>}
-              {moodEntries.map((entry, i) => (
-                <div key={i} className="text-xs py-1 border-b last:border-b-0 flex items-center gap-2">
+            <div className="text-left max-h-32 overflow-y-auto bg-white/70 rounded p-2 border border-muted-foreground/10">
+              {moodEntries.filter(e => dayjs(e.date).format('YYYY-MM-DD') === today).length === 0 && <div className="text-xs text-muted-foreground">No mood entries yet for today.</div>}
+              {moodEntries.filter(e => dayjs(e.date).format('YYYY-MM-DD') === today).map((entry, i) => (
+                <div key={i} className="text-xs py-1 border-b last:border-b-0 flex flex-wrap items-center gap-2">
                   <span>{entry.mood}</span>
-                  <span>{entry.note}</span>
-                  <span className="ml-auto text-muted-foreground">{entry.date}</span>
+                  <span className="truncate max-w-[100px]">{entry.note}</span>
+                  <span className="ml-auto text-muted-foreground">{entry.time}</span>
                 </div>
               ))}
             </div>
@@ -382,21 +410,20 @@ export const WellnessPage = () => {
           <CardContent className="p-6 text-center">
             <Zap className="w-8 h-8 mx-auto text-primary mb-3" />
             <h3 className="font-semibold mb-2">Energy Levels</h3>
-            <p className="text-sm text-muted-foreground mb-3">Monitor energy throughout the day</p>
-            {/* Chart */}
-            <div className="mb-4">
+            <p className="text-sm text-muted-foreground mb-3">Log your energy multiple times a day and see your trend.</p>
+            {/* Time-series Line Graph */}
+            <div className="mb-4 bg-gradient-to-b from-[#e6fff5] to-[#f6fdfb] rounded-lg p-2">
               <ResponsiveContainer width="100%" height={120}>
-                <LineChart data={energyChartData}>
-                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                <LineChart data={energyChartData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+                  <XAxis dataKey="time" tick={{ fontSize: 10 }} type="category" />
                   <YAxis domain={[1, 10]} width={24} />
                   <Tooltip />
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#b2f5ea" />
                   <Line type="monotone" dataKey="level" stroke="#13eba0" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
             <div className="flex gap-2 items-center mb-2">
-              <label htmlFor="energy-slider" className="sr-only">Energy Level</label>
               <input
                 id="energy-slider"
                 type="range"
@@ -407,15 +434,22 @@ export const WellnessPage = () => {
                 className="flex-1"
                 title="Energy level slider"
               />
+              <input
+                type="time"
+                className="border rounded px-2 py-1 w-24"
+                value={energyTime}
+                onChange={e => setEnergyTime(e.target.value)}
+                title="Time of energy"
+              />
               <span className="font-bold text-primary">{energy}</span>
               <Button size="sm" onClick={handleAddEnergy}>Log</Button>
             </div>
             <div className="text-left max-h-32 overflow-y-auto">
-              {energyEntries.length === 0 && <div className="text-xs text-muted-foreground">No energy entries yet.</div>}
-              {energyEntries.map((entry, i) => (
+              {energyEntries.filter(e => dayjs(e.date).format('YYYY-MM-DD') === today).length === 0 && <div className="text-xs text-muted-foreground">No energy entries yet for today.</div>}
+              {energyEntries.filter(e => dayjs(e.date).format('YYYY-MM-DD') === today).map((entry, i) => (
                 <div key={i} className="text-xs py-1 border-b last:border-b-0 flex items-center gap-2">
                   <span className="font-bold text-primary">{entry.level}</span>
-                  <span className="ml-auto text-muted-foreground">{entry.date}</span>
+                  <span className="ml-auto text-muted-foreground">{entry.time}</span>
                 </div>
               ))}
             </div>

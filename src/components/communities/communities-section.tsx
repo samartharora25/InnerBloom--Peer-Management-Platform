@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -163,6 +163,27 @@ export function CommunitiesSection() {
   const [discussionMessages, setDiscussionMessages] = useState<{[id: string]: { sender: string, text: string }[]}>({});
   const [discussionInput, setDiscussionInput] = useState("");
 
+  // Lottie animation for top of section
+  const lottieRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!document.querySelector('script[src*="dotlottie-wc"]')) {
+      const script = document.createElement("script");
+      script.type = "module";
+      script.src = "https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js";
+      document.body.appendChild(script);
+    }
+    if (lottieRef.current) {
+      lottieRef.current.innerHTML = '';
+      const lottie = document.createElement('dotlottie-wc');
+      lottie.setAttribute('src', 'https://lottie.host/b5f84b6f-a67c-4d68-9afa-198f817143bf/680y4IN5t0.lottie');
+      lottie.setAttribute('style', 'width: 300px; height: 300px;');
+      lottie.setAttribute('speed', '1');
+      lottie.setAttribute('autoplay', '');
+      lottie.setAttribute('loop', '');
+      lottieRef.current.appendChild(lottie);
+    }
+  }, []);
+
   const handleJoin = (id: string) => {
     setCommunities(communities.map(c => c.id === id ? { ...c, isJoined: true } : c));
   };
@@ -188,12 +209,10 @@ export function CommunitiesSection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold">Communities</h2>
-          <p className="text-muted-foreground">Join supportive groups that understand your journey</p>
-        </div>
-        <div className="flex flex-col md:flex-row gap-2 items-center">
+      <div className="flex flex-col items-center justify-center mb-2 gap-2">
+        <h2 className="text-3xl font-bold text-primary font-kalam">Communities</h2>
+        <p className="text-muted-foreground text-lg mb-2">Join supportive groups that understand your journey</p>
+        <div className="flex flex-col md:flex-row gap-2 items-center w-full justify-center">
           <Input
             placeholder="Find your Blooming circle"
             className="w-64"
@@ -205,6 +224,7 @@ export function CommunitiesSection() {
             Create Community
           </Button>
         </div>
+        <div ref={lottieRef} className="flex justify-center mt-4" />
       </div>
 
       <Dialog open={showCreate} onOpenChange={setShowCreate}>

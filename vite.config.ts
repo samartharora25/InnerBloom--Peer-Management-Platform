@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  assetsInclude: ["**/*.riv"],
   plugins: [
     react(),
     mode === 'development' &&

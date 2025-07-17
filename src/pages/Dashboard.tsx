@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Navigation } from "@/components/ui/navigation";
 import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
 import { SocialFeed } from "@/components/dashboard/social-feed";
@@ -13,13 +13,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { Smile, BookOpen, Camera, Gamepad2, Users, Calendar, Clock, Video, MapPin } from "lucide-react";
+import AvatarCustomization from "@/components/avatar-customization";
+import { useRive, useStateMachineInput } from "@rive-app/react-canvas";
+import chooseYourAvatarRiv from "../assets/choose_your_avatar.riv";
 
 function ProfilePage() {
+  const lottieRef = useRef<HTMLDivElement>(null);
+  const [name, setName] = useState("Samarth");
   const [email, setEmail] = useState("youremail@example.com");
   const [phone, setPhone] = useState("+91 9876543210");
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
-  const userName = "Samarth"; // Replace with dynamic user name if available
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
@@ -29,15 +33,39 @@ function ProfilePage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  useEffect(() => {
+    if (lottieRef.current) {
+      // Inject the script tag only once
+      if (!document.querySelector('script[src*="dotlottie-wc"]')) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js';
+        document.body.appendChild(script);
+      }
+      // Inject the dotlottie-wc element
+      lottieRef.current.innerHTML = '';
+      const lottie = document.createElement('dotlottie-wc');
+      lottie.setAttribute('src', 'https://lottie.host/f96587cb-b1b3-4eed-82a4-366153612d0f/r64Iz3n8Df.lottie');
+      lottie.setAttribute('style', 'width: 300px; height: 300px;');
+      lottie.setAttribute('speed', '1');
+      lottie.setAttribute('autoplay', '');
+      lottie.setAttribute('loop', '');
+      lottieRef.current.appendChild(lottie);
+    }
+  }, []);
+
   return (
     <div className="max-w-xl mx-auto mt-12 p-6 bg-white rounded-xl shadow-soft">
+      <div className="flex flex-col items-center mb-4">
+        <AvatarCustomization />
+      </div>
       <h2 className="text-2xl font-bold mb-6 text-primary">Profile</h2>
       <div className="mb-6 flex items-center gap-4">
         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
-          {userName[0]}
+          {name ? name[0] : "U"}
         </div>
         <div>
-          <div className="text-lg font-bold text-foreground">{userName}</div>
+          <div className="text-lg font-bold text-foreground">{name}</div>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-sm text-muted-foreground">Theme:</span>
             <button
@@ -49,38 +77,48 @@ function ProfilePage() {
           </div>
         </div>
       </div>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            type="email"
-            className="w-full border border-primary/30 rounded px-3 py-2 focus:outline-none focus:border-primary"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            disabled={!editing}
-            placeholder="Enter your email"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Phone</label>
-          <input
-            type="tel"
-            className="w-full border border-primary/30 rounded px-3 py-2 focus:outline-none focus:border-primary"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            disabled={!editing}
-            placeholder="Enter your phone number"
-          />
-        </div>
-        <div className="flex gap-2 pt-2">
-          {editing ? (
-            <button className="bg-primary text-white px-4 py-2 rounded" onClick={handleSave}>Save</button>
-          ) : (
-            <button className="bg-primary text-white px-4 py-2 rounded" onClick={() => setEditing(true)}>Edit</button>
-          )}
-        </div>
-        {saved && <div className="text-green-600 text-sm pt-2">Profile updated!</div>}
+      {/* Profile fields */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Name</label>
+        <input
+          type="text"
+          className="w-full border border-primary/30 rounded px-3 py-2 focus:outline-none focus:border-primary"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          disabled={!editing}
+          placeholder="Enter your name"
+        />
       </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Email</label>
+        <input
+          type="email"
+          className="w-full border border-primary/30 rounded px-3 py-2 focus:outline-none focus:border-primary"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          disabled={!editing}
+          placeholder="Enter your email"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Phone</label>
+        <input
+          type="tel"
+          className="w-full border border-primary/30 rounded px-3 py-2 focus:outline-none focus:border-primary"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          disabled={!editing}
+          placeholder="Enter your phone number"
+        />
+      </div>
+      <div className="flex gap-2 pt-2">
+        {editing ? (
+          <button className="bg-primary text-white px-4 py-2 rounded" onClick={handleSave}>Save</button>
+        ) : (
+          <button className="bg-primary text-white px-4 py-2 rounded" onClick={() => setEditing(true)}>Edit</button>
+        )}
+      </div>
+      {saved && <div className="text-green-600 text-sm pt-2">Profile updated!</div>}
     </div>
   );
 }
@@ -284,6 +322,16 @@ function Activities() {
 
   const filtered = activeTab === "All" ? activities : activities.filter(a => a.category === activeTab);
 
+  useEffect(() => {
+    // Inject dotlottie-wc script only once
+    if (!document.querySelector('script[src*="dotlottie-wc"]')) {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js';
+      document.body.appendChild(script);
+    }
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -332,7 +380,23 @@ function Activities() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-end gap-2 min-w-[120px]">
+            {/* Lottie Animations for specific activities */}
+            <div className="flex flex-col items-center gap-2 min-w-[120px]">
+              {activity.title === "Marathon" && (
+                <div>
+                  <dotlottie-wc src="https://lottie.host/331280b0-e0e0-4a7d-9253-53b2723d794a/HCsV5TRV3C.lottie" style={{width: '120px', height: '120px'}} speed="1" autoplay="" loop=""></dotlottie-wc>
+                </div>
+              )}
+              {activity.title === "Mindfulness Circle" && (
+                <div>
+                  <dotlottie-wc src="https://lottie.host/f96587cb-b1b3-4eed-82a4-366153612d0f/r64Iz3n8Df.lottie" style={{width: '120px', height: '120px'}} speed="1" autoplay="" loop=""></dotlottie-wc>
+                </div>
+              )}
+              {activity.title === "Creative Writing Workshop" && (
+                <div>
+                  <dotlottie-wc src="https://lottie.host/86aefb2e-2bae-454a-97b4-b32745e4c359/epFLB1Wqsd.lottie" style={{width: '120px', height: '120px'}} speed="1" autoplay="" loop=""></dotlottie-wc>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 {activity.type === "virtual" ? <Video className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
                 <span>{activity.type}</span>

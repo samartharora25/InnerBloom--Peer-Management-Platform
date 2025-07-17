@@ -8,6 +8,7 @@ import { EmergencySection } from "@/components/landing/emergency-section";
 import { Footer } from "@/components/landing/footer";
 import { LoginModal } from "@/components/auth/login-modal";
 import { SignupModal } from "@/components/auth/signup-modal";
+import AnimatedInnerBloomSection from "@/components/landing/animated-innerbloom-section";
 
 const LandingPage = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -21,6 +22,7 @@ const LandingPage = () => {
       />
       
       <HeroSection onGetStarted={() => setShowSignup(true)} />
+      <AnimatedInnerBloomSection />
       <HowItWorks />
       <WhyDifferent />
       <CommunityVoices />

@@ -2,7 +2,7 @@ import { Heart, Users, Calendar, MessageCircle, HelpCircle, Activity, User } fro
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import innerbloomLogo from "@/assets/innerbloom-logo.png";
+import icon from "@/assets/icon.png";
 import { MessageSquare } from "lucide-react";
 
 interface NavigationProps {
@@ -28,7 +28,7 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-primary">
-              <img src={innerbloomLogo} alt="Innerbloom Logo" className="w-6 h-6 object-contain" />
+              <img src={icon} alt="Innerbloom Icon" className="w-6 h-6 object-contain" />
             </div>
             <span className="text-xl font-bold text-[#004030] font-roboto">
               InnerBloom

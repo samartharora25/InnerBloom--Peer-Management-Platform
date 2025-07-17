@@ -6,25 +6,18 @@ import { Separator } from "@/components/ui/separator";
 
 const emergencyContacts = [
   {
-    name: "Crisis Text Line",
-    contact: "Text HOME to 741741",
-    description: "24/7 crisis support via text message",
-    icon: MessageCircle,
-    type: "emergency"
-  },
-  {
-    name: "National Suicide Prevention Lifeline",
-    contact: "988",
-    description: "24/7 suicide prevention and crisis support",
+    name: "National Mental Health Helpline",
+    contact: "14416",
+    description: "24/7 crisis support via phone (India)",
     icon: Phone,
     type: "emergency"
   },
   {
-    name: "SAMHSA National Helpline",
-    contact: "1-800-662-4357",
-    description: "Treatment referral and information service",
+    name: "Toll-Free Crisis Helpline",
+    contact: "18008914416",
+    description: "24/7 toll-free mental health support (India)",
     icon: Phone,
-    type: "support"
+    type: "emergency"
   }
 ];
 
@@ -78,7 +71,7 @@ export function HelpSection() {
             </p>
             <Button className="bg-destructive hover:bg-destructive/90 shadow-glow">
               <Phone className="w-4 h-4 mr-2" />
-              Call 988 - Crisis Lifeline
+              Call 14416 or 18008914416 - Crisis Lifeline
             </Button>
           </div>
           
